@@ -2,24 +2,39 @@
 using System.Collections.Generic;
 using CandorUpdater.Utils;
 using CommandLine;
+using Serilog;
+using Serilog.Core;
 
 namespace CandorUpdater.Main
 {
-    class CandorUpdater
+    internal class CandorUpdater
     {
         static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("candorlauncher.log")
+                .CreateLogger();
+            
+            Log.Information("Logger has be configured.");
+            
             var result = Parser.Default.ParseArguments<CliOptions>(args)
                 .WithParsed(ParseArgs)
                 .WithNotParsed(HandleParseError);
             
+            // Lets try to update the program now
+            // TODO: Add updating mechanism
+            
+            // Now lets try to launch the program
+            CandorStarter.StartCandor();
         }
 
         static void ParseArgs(CliOptions opts)
         {
             if(opts.Verbose)
             {
-                Console.WriteLine("We are verbose");
+                Log.Debug("We are verbose");
             }
         }
 
@@ -27,7 +42,10 @@ namespace CandorUpdater.Main
         {
             foreach (var error in errors)
             {
-                // Console.WriteLine(error);
+                if (error.StopsProcessing)
+                {
+                    Environment.Exit(ExitCodes.ParseError);
+                }
             }
         }
     }

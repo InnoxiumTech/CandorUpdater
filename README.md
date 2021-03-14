@@ -1,2 +1,2 @@
 # CandorUpdater
-This contains to code for the Updater CLI tool for candor.
+This contains to code for the Updater/Launcher CLI tool for candor.
