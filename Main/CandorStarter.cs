@@ -14,6 +14,7 @@ namespace CandorUpdater.Main
             {
                 StartInfo =
                 {
+                    // TODO: find java path or download it
                     FileName = "java",
                     Arguments = "-jar javaagent:/libs/candormanager.jar candormanager.jar",
                     UseShellExecute = false,
@@ -25,12 +26,12 @@ namespace CandorUpdater.Main
             };
             process.OutputDataReceived += (sender, data) => {
                 
-                Console.WriteLine(data.Data);
+                Log.ForContext<Process>().Information(data.Data);
             };
             process.StartInfo.RedirectStandardError = true;
             process.ErrorDataReceived += (sender, data) => {
                 
-                Console.WriteLine(data.Data);
+                Log.ForContext<Process>().Error(data.Data);
             };
             if (process.Start())
             {
