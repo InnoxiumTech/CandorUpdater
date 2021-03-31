@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Serilog;
 
 namespace CandorUpdater.Main
@@ -16,21 +15,22 @@ namespace CandorUpdater.Main
                 {
                     // TODO: find java path or download it
                     FileName = "java",
-                    Arguments = "-jar javaagent:/libs/candormanager.jar candormanager.jar",
+                    Arguments = "-jar CandorManager-snapshot.jar",
                     UseShellExecute = false,
-                    CreateNoWindow = true,
+                    CreateNoWindow = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     ErrorDialog = true
                 }
             };
-            process.OutputDataReceived += (sender, data) => {
-                
+            process.StartInfo.RedirectStandardOutput = true;
+            process.OutputDataReceived += (sender, data) => 
+            {
                 Log.ForContext<Process>().Information(data.Data);
             };
             process.StartInfo.RedirectStandardError = true;
-            process.ErrorDataReceived += (sender, data) => {
-                
+            process.ErrorDataReceived += (sender, data) =>
+            {
                 Log.ForContext<Process>().Error(data.Data);
             };
             if (process.Start())
@@ -44,7 +44,7 @@ namespace CandorUpdater.Main
             
             process.WaitForExitAsync();
             string output = process.StandardOutput.ReadToEnd();
-            Log.Debug(output);
+            Log.Information(output);
         }
     }
 }

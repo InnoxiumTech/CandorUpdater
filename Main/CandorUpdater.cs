@@ -1,20 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using CandorUpdater.Utils;
 using CommandLine;
 using Serilog;
-using Serilog.Core;
 
 namespace CandorUpdater.Main
 {
     internal class CandorUpdater
     {
-        static void Main(string[] args)
+        private const string LogFileName = "candorlauncher.log";
+        private const string BakLogFileName = "candorlauncher.bak.log";
+
+        private static void Main(string[] args)
         {
+            if (File.Exists(LogFileName))
+            {
+                File.Copy(LogFileName, BakLogFileName, true);
+                File.Delete(LogFileName);
+            }
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
-                .WriteTo.File("candorlauncher.log")
+                .WriteTo.File(LogFileName)
                 .CreateLogger();
             
             Log.Information("Logger has be configured.");
