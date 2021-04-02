@@ -7,7 +7,6 @@ namespace CandorUpdater.Main
     {
         public static void StartCandor()
         {
-            // TODO: this is WIP and likely will not work, we need to change the build procedure for candor first
             Log.Information("We are attempting to start candor now!");
             var process = new Process
             {
