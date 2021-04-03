@@ -22,18 +22,18 @@ namespace CandorUpdater.Main
                     ErrorDialog = true
                 }
             };
-            process.StartInfo.RedirectStandardOutput = true;
             process.OutputDataReceived += (sender, data) => 
             {
                 Log.ForContext<Process>().Information(data.Data);
             };
-            process.StartInfo.RedirectStandardError = true;
             process.ErrorDataReceived += (sender, data) =>
             {
                 Log.ForContext<Process>().Error(data.Data);
             };
             if (process.Start())
             {
+                process.BeginOutputReadLine();
+                process.BeginErrorRealLine();
                 Log.Debug("We have started candor!");
             }
             else
@@ -42,6 +42,7 @@ namespace CandorUpdater.Main
             }
             
             process.WaitForExitAsync();
+            process.CancelOutputRead();
             string output = process.StandardOutput.ReadToEnd();
             Log.Information(output);
         }
