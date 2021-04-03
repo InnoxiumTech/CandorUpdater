@@ -33,7 +33,7 @@ namespace CandorUpdater.Main
             if (process.Start())
             {
                 process.BeginOutputReadLine();
-                process.BeginErrorRealLine();
+                process.BeginErrorReadLine();
                 Log.Debug("We have started candor!");
             }
             else
@@ -43,6 +43,7 @@ namespace CandorUpdater.Main
             
             process.WaitForExitAsync();
             process.CancelOutputRead();
+            process.CancelErrorRead();
             string output = process.StandardOutput.ReadToEnd();
             Log.Information(output);
         }
