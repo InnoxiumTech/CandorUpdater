@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using Serilog;
 
 namespace CandorUpdater.Main
@@ -41,11 +42,11 @@ namespace CandorUpdater.Main
                 Log.Error("Unable to start candor.");
             }
             
-            process.WaitForExitAsync();
+            process.WaitForExit();
             process.CancelOutputRead();
             process.CancelErrorRead();
-            string output = process.StandardOutput.ReadToEnd();
-            Log.Information(output);
+            // string output = process.StandardOutput.ReadToEnd();
+            // Log.Information(output);
         }
     }
 }

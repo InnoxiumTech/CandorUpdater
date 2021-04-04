@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CandorUpdater.Utils;
 using CommandLine;
 using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace CandorUpdater.Main
 {
@@ -22,19 +23,21 @@ namespace CandorUpdater.Main
                 File.Copy(LogFileName, BakLogFileName, true);
                 File.Delete(LogFileName);
             }
+            
+            
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.Console()
+                .WriteTo.Console(theme: SystemConsoleTheme.Colored, applyThemeToRedirectedOutput: true)
                 .WriteTo.File(LogFileName)
                 .CreateLogger();
-            
+
             Log.Information("Logger has be configured.");
             
             var result = Parser.Default.ParseArguments<CliOptions>(args)
                 .WithParsed(ParseArgs)
                 .WithNotParsed(HandleParseError);
-            
+
             // Lets try to update the program now
             // TODO: Add updating mechanism
             await CandorDownloader.DownloadCandor();
@@ -43,7 +46,7 @@ namespace CandorUpdater.Main
             CandorStarter.StartCandor();
         }
 
-        static void ParseArgs(CliOptions opts)
+        private static void ParseArgs(CliOptions opts)
         {
             if(opts.Verbose)
             {
@@ -53,12 +56,13 @@ namespace CandorUpdater.Main
             Opts = opts;
         }
 
-        static void HandleParseError(IEnumerable<Error> errors)
+        private static void HandleParseError(IEnumerable<Error> errors)
         {
             foreach (var error in errors)
             {
                 if (error.StopsProcessing)
                 {
+                    Log.Error("Encountered an error parsing the arguments, exiting...");
                     Environment.Exit(ExitCodes.ParseError);
                 }
             }
